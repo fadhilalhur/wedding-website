@@ -18,8 +18,8 @@
             data-allowed-file-extensions="jpg jpeg png webp"
             data-max-file-size="5M">
     </div>
-    <button type="submit" class="btn btn-primary">Update</button>
-    <a href="<?= base_url('admin/kategori-pages') ?>" class="btn btn-secondary">Kembali</a>
+    <a href="<?= base_url('admin/kategori-pages') ?>" class="btn btn-danger"><span class="fas fa-times"></span> Kembali</a>
+    <button type="submit" class="btn btn-primary"><span class="fas fa-save"></span> Perbarui</button>
 </form>
 
 <?= $this->endSection(); ?>

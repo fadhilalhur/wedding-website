@@ -7,10 +7,12 @@ use App\Models\CompanyModel;
 use App\Models\PagesModel;
 use App\Models\ImageSliderModel;
 use App\Models\NewsModel;
+use App\Models\PromoModel;
 use App\Models\DoctorModel;
 use App\Models\ContactModel;
 use App\Models\SchedulesModel;
 use App\Models\AsuransiModel;
+use App\Models\KategoriPagesModel;
 
 class PublicWebController extends BaseController
 {
@@ -22,6 +24,44 @@ class PublicWebController extends BaseController
         $this->imageSliderModel = new ImageSliderModel();
         $this->asuransiModel = new AsuransiModel();
     }
+    
+    public function Call()
+    {
+	return view('call');
+    }
+
+    public function asuransi()
+    {
+        $menuModel    = new MenuModel();
+        $companyModel = new CompanyModel();
+        $asuransiModel = new AsuransiModel();
+        $bredcam = new KategoriPagesModel();
+    
+        // Fetch company data (assuming single record)
+        $company = $companyModel->first();
+        $bredcam_kategori = $bredcam->find(7);
+        // Fetch menus with Query Builder
+        $menus = $menuModel
+            ->where('menu_type', 'public')
+            ->orderBy('position', 'ASC')
+            ->findAll();
+    
+        // Fetch insurance data with Query Builder
+        $asuransi = $asuransiModel
+            ->select('id, nama, logo, deskripsi, created_at, updated_at')
+            ->orderBy('id', 'DESC') // Optional: Order by ID descending
+            ->findAll();
+    
+        return view('layouts/public_web1', [
+            'company' => $company,
+            'menus'   => $menus,
+            'asuransi' => $asuransi,
+            'breadcam' => $bredcam_kategori,
+            'title'   => 'Daftar Asuransi',
+            'content' => 'public_web1/asuransi/index',
+        ]);
+    }
+    
     public function index_v2()
     {
         $pagesModel = new PagesModel();
@@ -110,15 +150,70 @@ class PublicWebController extends BaseController
 
         return view('public_web1/berita/ajax_news_list', ['news' => $news]);
     }
+    
+    public function batterymonitor()
+    {
+        $this->response->setHeader('Content-Type', 'application/json');
+    
+        $raw = file_get_contents("php://input");
+        $json = json_decode($raw, true);
+        
+        $logFile = WRITEPATH . 'battery_log.txt'; // file di writable/ folder
+        $logEntry = "[" . date('Y-m-d H:i:s') . "] RAW INPUT: " . $raw . PHP_EOL;
+        file_put_contents($logFile, $logEntry, FILE_APPEND);
+    
+        $device_id = $json['device_id'] ?? null;
+        $level     = $json['level'] ?? null;
+        $status    = $json['status'] ?? null;
+    
+        if (!$device_id || !$level || !$status) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Incomplete data'
+            ]);
+        }
+    
+        $db = \Config\Database::connect('super_app');
+        $builder = $db->table('battery_status');
+    
+        $data = [
+            'device_id'  => $device_id,
+            'level'      => $level,
+            'status'     => $status,
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+    
+        $exists = $builder->where('device_id', $device_id)->get()->getRow();
+    
+        if ($exists) {
+            $builder->where('device_id', $device_id)->update($data);
+            $affected = $db->affectedRows();
+            $action = 'updated';
+        } else {
+            $builder->insert($data);
+            $affected = $db->affectedRows();
+            $action = 'inserted';
+        }
+        
+        $logEntry = "[" . date('Y-m-d H:i:s') . "] Data $action, affectedRows=$affected, device_id=$device_id, level=$level, status=$status" . PHP_EOL;
+        file_put_contents($logFile, $logEntry, FILE_APPEND);
+    
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Battery status updated'
+        ]);
+    }
+
 
     public function berita()
     {
         $model = new NewsModel();
         $companyModel = new CompanyModel();
         $menuModel    = new MenuModel();
-
+        $bredcam = new KategoriPagesModel();
         $search = $this->request->getGet('q');
         $query = $model->orderBy('published_at', 'DESC');
+        $bredcam_kategori = $bredcam->find(11);
 
         if (!empty($search)) {
             $query->like('title', $search);
@@ -143,17 +238,63 @@ class PublicWebController extends BaseController
             'news' => $news,
             'pager' => $pager,
             'search' => $search,
+            'breadcam' => $bredcam_kategori,
             'recentPosts' => $recentPosts,
             'content' => 'public_web1/berita/berita_list',
         ]);
     }
+
+    public function promo()
+    {
+        $model = new NewsModel();
+        $companyModel = new CompanyModel();
+        $menuModel    = new MenuModel();
+        $bredcam = new KategoriPagesModel();
+        $search = $this->request->getGet('q');
+        $query = $model
+                ->where('show_as_promo', 1)
+                ->orderBy('published_at', 'DESC');
+        $bredcam_kategori = $bredcam->find(13);
+
+        if (!empty($search)) {
+            $query->like('title', $search);
+        }
+        $company = $companyModel->first();
+        $menus = $menuModel
+            ->where('menu_type', 'public')
+            ->orderBy('position', 'ASC')
+            ->findAll();
+
+        $news = $query->paginate(5);
+
+        $recentPosts = $model
+            ->where('show_as_promo', 1) // Pastikan recentPosts juga hanya ambil yang promo
+            ->orderBy('published_at', 'DESC')
+            ->limit(4)
+            ->findAll();
+
+        $pager = $model->pager;
+        return view('layouts/public_web1', [
+            'company' => $company,
+            'menus'   => $menus,
+            'news' => $news,
+            'pager' => $pager,
+            'search' => $search,
+            'breadcam' => $bredcam_kategori,
+            'recentPosts' => $recentPosts,
+            'content' => 'public_web1/promo/promo_list',
+        ]);
+    }
+
     public function detail($slug)
     {
         $newsModel = new NewsModel();
         $companyModel = new CompanyModel();
         $menuModel    = new MenuModel();
+        $bredcam = new KategoriPagesModel();
         // Ambil berita berdasarkan slug
         $news = $newsModel->where('slug', $slug)->first();
+        $bredcam_kategori = $bredcam->find(12);
 
         if (!$news) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Berita tidak ditemukan.");
@@ -172,8 +313,42 @@ class PublicWebController extends BaseController
             'company' => $company,
             'menus'   => $menus,
             'news' => $news,
+            'breadcam' => $bredcam_kategori,
             'recentPosts' => $recentPosts,
             'content' => 'public_web1/berita/berita_detail',
+        ]);
+    }
+
+    public function detailpromo($slug)
+    {
+        $newsModel = new PromoModel();
+        $companyModel = new CompanyModel();
+        $menuModel    = new MenuModel();
+        $bredcam = new KategoriPagesModel();
+        // Ambil berita berdasarkan slug
+        $news = $newsModel->where('slug', $slug)->first();
+        $bredcam_kategori = $bredcam->find(14);
+
+        if (!$news) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Berita tidak ditemukan.");
+        }
+        $company = $companyModel->first();
+        $menus = $menuModel
+            ->where('menu_type', 'public')
+            ->orderBy('position', 'ASC')
+            ->findAll();
+        // Ambil 4 berita terbaru lain sebagai recent posts
+        $recentPosts = $newsModel->orderBy('published_at', 'DESC')
+            ->where('id !=', $news['id'])
+            ->findAll(4);
+
+        return view('layouts/public_web1', [
+            'company' => $company,
+            'menus'   => $menus,
+            'news' => $news,
+            'breadcam' => $bredcam_kategori,
+            'recentPosts' => $recentPosts,
+            'content' => 'public_web1/promo/promo_detail',
         ]);
     }
 
@@ -183,6 +358,10 @@ class PublicWebController extends BaseController
         $companyModel = new CompanyModel();
         $menuModel    = new MenuModel();
         $doktorModel    = new DoctorModel();
+        $bredcam = new KategoriPagesModel();
+
+        $bredcam_kategori = $bredcam->find(6);
+
         $search = $this->request->getGet('q');
         $query = $model->orderBy('published_at', 'DESC');
         $doctor = $doktorModel->orderBy('created_at', 'DESC')->findAll();
@@ -209,33 +388,36 @@ class PublicWebController extends BaseController
             'news' => $news,
             'pager' => $pager,
             'doctor'  => $doctor,
+            'breadcam' => $bredcam_kategori,
             'search' => $search,
             'recentPosts' => $recentPosts,
             'content' => 'public_web1/dokter/dokter_list',
         ]);
     }
 
-    public function visimisi()
-    {
-        $db = db_connect();
-        $companyVisiMisi = $db->table('company_visi_misi')
-            ->where('deleted', 0)
-            ->orderBy('id', 'DESC')
-            ->get()
-            ->getResultArray();
+    // public function visimisi()
+    // {
+    //     $db = db_connect();
+    //     $companyVisiMisi = $db->table('company_visi_misi')
+    //         ->where('deleted', 0)
+    //         ->orderBy('id', 'DESC')
+    //         ->get()
+    //         ->getResultArray();
 
-        return view('public_web/visi_misi2', [
-            'companyVisiMisi' => $companyVisiMisi
-        ]);
-    }
+    //     return view('public_web/visi_misi2', [
+    //         'companyVisiMisi' => $companyVisiMisi
+    //     ]);
+    // }
 
     public function fasilitas()
     {
         $model = new PagesModel();
         $companyModel = new CompanyModel();
         $menuModel    = new MenuModel();
-        $search = $this->request->getGet('q');
+        $bredcam = new KategoriPagesModel();
 
+        $search = $this->request->getGet('q');
+        $bredcam_kategori = $bredcam->find(1);
         $query = $model->where('kategori_id', 1)->orderBy('created_at', 'DESC');
 
         if (!empty($search)) {
@@ -258,6 +440,7 @@ class PublicWebController extends BaseController
             'company' => $company,
             'menus'   => $menus,
             'fasilitas' => $fasilitas,
+            'breadcam' => $bredcam_kategori,
             'pager'     => $pager,
             'search'    => $search,
             'recentFasilitas' => $recentFasilitas,
@@ -269,11 +452,14 @@ class PublicWebController extends BaseController
         $model = new \App\Models\PagesModel();
         $companyModel = new CompanyModel();
         $menuModel    = new MenuModel();
+        $bredcam = new KategoriPagesModel();
+
         $fasilitas = $model
             ->where('slug', $slug)
             ->where('kategori_id', 1)
             ->first();
-
+        $bredcam_kategori = $bredcam->find(10);
+        
         if (!$fasilitas) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Fasilitas tidak ditemukan.");
         }
@@ -292,6 +478,7 @@ class PublicWebController extends BaseController
             'company' => $company,
             'menus'   => $menus,
             'fasilitas' => $fasilitas,
+            'breadcam' => $bredcam_kategori,
             'recentFasilitas' => $recentFasilitas,
             'content' => 'public_web1/fasilitas/detail_fasilitas',
         ]);
@@ -304,16 +491,6 @@ class PublicWebController extends BaseController
         return view('public_web/dashboard', $data);
     }
 
-    public function about()
-    {
-        $pagesModel = new PagesModel();
-        $about = $pagesModel->where('slug', 'tentang-kami')->first();
-
-        return view('public_web/about_section', [
-            'about' => $about
-        ]);
-    }
-
     public function sejarah()
     {
         $pagesModel = new PagesModel();
@@ -323,9 +500,12 @@ class PublicWebController extends BaseController
             'sejarah' => $sejarah
         ]);
     }
+
     public function kontakKami()
     {
         $menuModel    = new MenuModel();
+        $bredcam = new KategoriPagesModel();
+        $bredcam_kategori = $bredcam->find(8);
 
         $companyModel = new CompanyModel();
         $company = $companyModel->first(); // Asumsikan hanya 1 baris company
@@ -336,7 +516,92 @@ class PublicWebController extends BaseController
         return view('layouts/public_web1', [
             'company' => $company,
             'menus'   => $menus,
+            'breadcam' => $bredcam_kategori,
             'content' => 'public_web1/kontak/kontak_kami',
+        ]);
+    }
+
+    public function profil()
+    {
+        $menuModel    = new MenuModel();
+        $bredcam = new KategoriPagesModel();
+        $bredcam_kategori = $bredcam->find(15);
+
+        $profilModel = new PagesModel();
+        $profil = $profilModel
+                ->where('kategori_id', 15)
+                ->first();
+
+        $menus = $menuModel
+            ->where('menu_type', 'public')
+            ->orderBy('position', 'ASC')
+            ->findAll();
+        
+        $companyModel = new CompanyModel();
+        $company = $companyModel->first(); 
+
+        return view('layouts/public_web1', [
+            'company' => $company,
+            'profil' => $profil,
+            'menus'   => $menus,
+            'breadcam' => $bredcam_kategori,
+            'content' => 'public_web1/kontak/profil',
+        ]);
+    }
+
+    public function visimisi()
+    {
+        $menuModel    = new MenuModel();
+        $bredcam = new KategoriPagesModel();
+        $bredcam_kategori = $bredcam->find(3);
+
+        $profilModel = new PagesModel();
+        $visimisi = $profilModel
+                ->where('kategori_id', 3)
+                ->first();
+
+        $menus = $menuModel
+            ->where('menu_type', 'public')
+            ->orderBy('position', 'ASC')
+            ->findAll();
+        
+        $companyModel = new CompanyModel();
+        $company = $companyModel->first(); 
+
+        return view('layouts/public_web1', [
+            'company' => $company,
+            'profil' => $visimisi,
+            'menus'   => $menus,
+            'breadcam' => $bredcam_kategori,
+            'content' => 'public_web1/kontak/visimisi',
+        ]);
+    }
+
+    public function mutu()
+    {
+        $menuModel    = new MenuModel();
+        $bredcam = new KategoriPagesModel();
+        $bredcam_kategori = $bredcam->find(16);
+
+        $profilModel = new PagesModel();
+        $visimisi = $profilModel
+                ->where('kategori_id', 16)
+                ->first();
+
+        $menus = $menuModel
+            ->where('menu_type', 'public')
+            ->orderBy('position', 'ASC')
+            ->findAll();
+        
+        $companyModel = new CompanyModel();
+        $company = $companyModel->first(); 
+
+        return view('layouts/public_web1', [
+            'company' => $company,
+            'profil' => $visimisi,
+            'menus'   => $menus,
+            'breadcam' => $bredcam_kategori,
+            'content' => 'public_web1/kontak/mutu',
         ]);
     }
 
@@ -378,14 +643,12 @@ class PublicWebController extends BaseController
 
     public function jadwalDokter()
     {
-        // Data untuk dropdown poli dan hari tidak lagi diperlukan di sini
-        // karena search formnya sudah digabung menjadi satu keyword input.
-        // Namun, jika Anda ingin tetap menampilkannya untuk referensi di view,
-        // bisa saja tetap dipertahankan, tapi tidak akan digunakan untuk filter di backend
-        // via PublicWebController::getJadwalDokter() lagi secara eksplisit.
         $menuModel    = new MenuModel();
-
+        $bredcam = new KategoriPagesModel();
         $companyModel = new CompanyModel();
+
+        $bredcam_kategori = $bredcam->find(9);
+
         $company = $companyModel->first(); // Asumsikan hanya 1 baris company
         $menus = $menuModel
             ->where('menu_type', 'public')
@@ -416,6 +679,7 @@ class PublicWebController extends BaseController
             'company' => $company,
             'menus'   => $menus,
             'data'   => $data,
+            'breadcam' => $bredcam_kategori,
             'content' => 'public_web1/dokter/jadwal_dokter_v2',
         ]);
     }
@@ -479,59 +743,4 @@ class PublicWebController extends BaseController
 
         return $this->response->setJSON(array_values($grouped));
     }
-
-
-    public function asuransi()
-{
-    $menuModel    = new MenuModel();
-    $companyModel = new CompanyModel();
-    $asuransiModel = new AsuransiModel();
-
-    // Fetch company data (assuming single record)
-    $company = $companyModel->first();
-
-    // Fetch menus with Query Builder
-    $menus = $menuModel
-        ->where('menu_type', 'public')
-        ->orderBy('position', 'ASC')
-        ->findAll();
-
-    // Fetch insurance data with Query Builder
-    $asuransi = $asuransiModel
-        ->select('id, nama, logo, deskripsi, created_at, updated_at')
-        ->orderBy('id', 'DESC') // Optional: Order by ID descending
-        ->findAll();
-
-    return view('layouts/public_web1', [
-        'company' => $company,
-        'menus'   => $menus,
-        'asuransi' => $asuransi,
-        'title'   => 'Daftar Asuransi',
-        'content' => 'public_web1/asuransi/index',
-    ]);
-}
-    // public function asuransi()
-    // {
-    //     $menuModel    = new MenuModel();
-
-    //     $companyModel = new CompanyModel();
-    //     $company = $companyModel->first(); // Asumsikan hanya 1 baris company
-    //     $menus = $menuModel
-    //         ->where('menu_type', 'public')
-    //         ->orderBy('position', 'ASC')
-    //         ->findAll();
-      
-    //     $asuransiModel = new \App\Models\AsuransiModel(); // Instantiate model directly
-    //     $data = [
-    //         'title' => 'Daftar Asuransi',
-    //         'company' => $company,
-    //         'menus'   => $menus,
-    //         'asuransi' => $asuransiModel->findAll(), // Use local model instance
-    //     ];
-
-    //     return view('layouts/public_web1', [
-    //         'data' => $data,
-    //         'content' => 'public_web1/asuransi/index',
-    //     ]);
-    // }
 }

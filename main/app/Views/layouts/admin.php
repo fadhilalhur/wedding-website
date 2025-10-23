@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
+<!-- [Head] start -->
+
 <script>
     var base_url = "<?= base_url() ?>";
 </script>
 
 <head>
-    <title>Petugas | Website</title>
+    <title>Administrator</title>
+    <!-- [Meta] -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,33 +16,47 @@
     <meta name="keywords" content="Mantis, Dashboard UI Kit, Bootstrap 5, Admin Template, Admin Dashboard, CRM, CMS, Bootstrap Admin Template">
     <meta name="author" content="CodedThemes">
 
-    <link rel="icon" href="<?= base_url() ?>favicon.ico" type="image/x-icon">
+    <!-- [Favicon] icon -->
+    <link rel="icon" href="<?= base_url() ?>favicon.ico" type="image/x-icon"> <!-- [Google Font] Family -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" id="main-font-link">
+    <!-- [Tabler Icons] https://tablericons.com -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/admin/fonts/tabler-icons.min.css">
+    <!-- [Feather Icons] https://feathericons.com -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/admin/fonts/feather.css">
+    <!-- [Font Awesome Icons] https://fontawesome.com/icons -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/admin/fonts/fontawesome.css">
+    <!-- [Material Icons] https://fonts.google.com/icons -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/admin/fonts/material.css">
+    <!-- [Template CSS Files] -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/admin/css/style.css" id="main-style-link">
     <link rel="stylesheet" href="<?= base_url() ?>assets/admin/css/style-preset.css">
+
+    <!-- DataTables CSS -->
     <?= $this->renderSection('styles') ?>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs4.min.css" rel="stylesheet">
     <link href="<?= base_url('assets/admin/libs/dropify/dist/css/dropify.min.css') ?>" rel="stylesheet">
 </head>
-<body data-pc-preset="preset-1" data-pc-direction="ltr" data-pc-theme="light">
+<!-- [Head] end -->
+<!-- [Body] Start -->
 
+<body data-pc-preset="preset-1" data-pc-direction="ltr" data-pc-theme="light">
+    <!-- [ Pre-loader ] start -->
     <div class="loader-bg">
         <div class="loader-track">
             <div class="loader-fill"></div>
         </div>
     </div>
-
+    <!-- [ Pre-loader ] End -->
+    <!-- [ Sidebar Menu ] start -->
     <nav class="pc-sidebar">
         <div class="navbar-wrapper">
             <div class="m-header">
-                <a href="<?= base_url() ?>admin" class="b-brand text-primary">
-                    <img src="<?= get_company_logo() ?>" class="img-fluid logo-lg" width="96px" alt="<?= get_company_name() ?>"><br>
+                <a href="<?= base_url() ?>dashboard/index.html" class="b-brand text-primary">
+                    <!-- ========   Company Logo   ============ -->
+                    <img src="<?= get_company_logo() ?>" class="img-fluid logo-lg" width="50px" alt="<?= get_company_name() ?>"><br>
+                    <small><?= get_company_name() ?></small>
                 </a>
             </div>
             <div class="navbar-content">
@@ -71,10 +88,12 @@
 
         </div>
     </nav>
+    <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start -->
     <header class="pc-header">
-        <div class="header-wrapper">
+        <div class="header-wrapper"> <!-- [Mobile Media Block] start -->
             <div class="me-auto pc-mob-drp">
                 <ul class="list-unstyled">
+                    <!-- ======= Menu collapse Icon ===== -->
                     <li class="pc-h-item pc-sidebar-collapse">
                         <a href="#" class="pc-head-link ms-0" id="sidebar-hide">
                             <i class="ti ti-menu-2"></i>
@@ -112,6 +131,7 @@
                     </li>
                 </ul>
             </div>
+            <!-- [Mobile Media Block end] -->
             <div class="ms-auto">
                 <ul class="list-unstyled">
                     <li class="dropdown pc-h-item">
@@ -225,23 +245,12 @@
                                         aria-controls="drp-tab-1"
                                         aria-selected="true"><i class="ti ti-user"></i> Profil</button>
                                 </li>
-                                <li class="nav-item" role="presentation">
-                                    <button
-                                        class="nav-link"
-                                        id="drp-t2"
-                                        data-bs-toggle="tab"
-                                        data-bs-target="#drp-tab-2"
-                                        type="button"
-                                        role="tab"
-                                        aria-controls="drp-tab-2"
-                                        aria-selected="false"><i class="ti ti-settings"></i> Pengaturan</button>
-                                </li>
                             </ul>
                             <div class="tab-content" id="mysrpTabContent">
                                 <div class="tab-pane fade show active" id="drp-tab-1" role="tabpanel" aria-labelledby="drp-t1" tabindex="0">
                                     <a href="<?= base_url('admin/users/edit/' . esc(session('user_id'))) ?>" class="dropdown-item">
                                         <i class="ti ti-edit-circle"></i>
-                                        <span>Edit Profil</span>
+                                        <span>Ubah Profil</span>
                                     </a>
                                     <a href="<?= base_url('admin/users/' . esc(session('user_id'))) ?>" class="dropdown-item">
                                         <i class="ti ti-user"></i>
@@ -250,14 +259,9 @@
 
                                     <a href="<?= base_url('admin/users/create') ?>" class="dropdown-item">
                                         <i class="ti ti-user-plus"></i>
-                                        <span>Tambah User</span>
+                                        <span>Tambah Pengguna</span>
                                     </a>
-                                    <a href="#!" class="dropdown-item">
-                                        <i class="ti ti-wallet"></i>
-                                        <span>Penagihan</span>
-                                    </a>
-
-                                    <a href="<?= base_url('admin/logout') ?>" class="dropdown-item">
+                                    <a href="<?= base_url('logout') ?>" class="dropdown-item">
                                         <i class="ti ti-power"></i>
                                         <span>Keluar</span>
                                     </a>
@@ -326,24 +330,20 @@
         <div class="footer-wrapper container-fluid">
             <div class="row">
                 <div class="col-sm my-1">
-                    <p class="m-0">Mantis &#9829; dibuat oleh Tim <a href="https://themeforest.net/user/codedthemes" target="_blank">Codedthemes</a> Didistribusikan oleh <a href="https://themewagon.com/">ThemeWagon</a>.</p>
+                    <p class="m-0">WebAdmin &#9829; ITRSMH </p>
                 </div>
                 <div class="col-auto my-1">
                     <ul class="list-inline footer-link mb-0">
-                        <li class="list-inline-item"><a href="<?= base_url() ?>index.html">Beranda</a></li>
+                        <li class="list-inline-item"><a href="<?= base_url() ?>" target="_Blank">Lihat Website</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- [Page Specific JS] start -->
     <script src="<?= base_url() ?>assets/admin/js/plugins/apexcharts.min.js"></script>
     <script src="<?= base_url() ?>assets/admin/js/pages/dashboard-default.js"></script>
-    <!-- [Page Specific JS] end -->
-    <!-- Required Js -->
     <script src="<?= base_url() ?>assets/admin/js/plugins/popper.min.js"></script>
-    <!-- jQuery & DataTables JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
@@ -358,32 +358,21 @@
     <script src="<?= base_url() ?>assets/admin/js/pcoded.js"></script>
     <script src="<?= base_url() ?>assets/admin/js/plugins/feather.min.js"></script>
 
-
-
-
-
     <script>
         layout_change('light');
     </script>
-
-
-
 
     <script>
         change_box_container('false');
     </script>
 
-
-
     <script>
         layout_rtl_change('false');
     </script>
 
-
     <script>
         preset_change("preset-1");
     </script>
-
 
     <script>
         font_change("Public-Sans");
@@ -392,8 +381,6 @@
     <script>
 
     </script>
-
-
 
     <script>
         $(document).ready(function() {
@@ -427,6 +414,5 @@
     </script>
     <?= $this->renderSection('scripts') ?>
 </body>
-<!-- [Body] end -->
 
 </html>

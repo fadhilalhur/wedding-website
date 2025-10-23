@@ -1,16 +1,14 @@
 <!-- bradcam_area_start  -->
-<div class="bradcam_area breadcam_bg bradcam_overlay">
-    <div class="container">
-        <div class="row">
-            <div class="col-xl-12">
-                <div class="bradcam_text">
-                    <h3>Fasilitas</h3>
-                    <p><a href="<?= base_url('/') ?>">Home /</a> Fasilitas</p>
-                </div>
-            </div>
-        </div>
+<?php if (!empty($breadcam['gambar'])): ?>
+    <div class="bradcam_area" 
+         style="background: url('<?= base_url($breadcam['gambar']) ?>') no-repeat center center; 
+                background-size: cover; padding: 80px 0;">
     </div>
-</div>
+<?php else: ?>
+    <div class="bradcam_area" style="background-color: #ccc; padding: 80px 0;">
+        
+    </div>
+<?php endif; ?>
 <!-- bradcam_area_end  -->
 
 <section class="blog_area section-padding">

@@ -1,16 +1,13 @@
-<div class="bradcam_area breadcam_bg_2 bradcam_overlay">
-    <div class="container">
-        <div class="row">
-            <div class="col-xl-12">
-                <div class="bradcam_text">
-                    <h3>Kontak Kami</h3>
-                    <p><a href="<?= base_url('/') ?>">Home /</a> Kontak Kami</p>
-                </div>
-            </div>
-        </div>
+<?php if (!empty($breadcam['gambar'])): ?>
+    <div class="bradcam_area" 
+         style="background: url('<?= base_url($breadcam['gambar']) ?>') no-repeat center center; 
+                background-size: cover; padding: 80px 0;">
     </div>
-</div>
-<!-- bradcam_area_end -->
+<?php else: ?>
+    <div class="bradcam_area" style="background-color: #ccc; padding: 80px 0;">
+        
+    </div>
+<?php endif; ?>
 
 <!-- ================ contact section start ================= -->
 <section class="contact-section">

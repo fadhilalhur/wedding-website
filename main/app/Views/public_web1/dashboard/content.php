@@ -1,32 +1,19 @@
+<!-- Slider Area -->
 <div class="slider_area">
     <div class="slider_active owl-carousel">
-      <?php foreach ($sliders as $slider) : ?>
-          <div class="single_slider d-flex align-items-center" style="background-image: url('<?= base_url('uploads/image_slider/' . esc($slider['image'])) ?>');">
-              <div class="container">
-                  <div class="row">
-                      <div class="col-xl-12">
-                          <div class="slider_text">
-                              <h3>
-                                  <span><?= esc($slider['title']) ?></span> <br>
-                                  <?= esc($slider['title']) ?>
-                              </h3>
-                              <p><?= esc($slider['content']) ?></p>
-                              <a href="<?= esc($slider['slug']) ?>" class="boxed-btn3"></a>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      <?php endforeach; ?>
+        <?php foreach ($sliders as $slider) : ?>
+            <div class="single_slider" style="background-image: url('<?= base_url(esc($slider['gambar'])) ?>')"></div>
+        <?php endforeach; ?>
     </div>
 </div>
 
-<div class="service_area ">
+<!-- Service Area -->
+<div class="service_area">
     <div class="container p-0">
         <div class="row no-gutters">
             <?php foreach ($fasilitas as $item): ?>
                 <div class="col-xl-4 col-md-4 d-flex">
-                    <div class="single_service ">
+                    <div class="single_service">
                         <div class="icon">
                             <i class="flaticon-electrocardiogram"></i>
                         </div>
@@ -36,11 +23,11 @@
                     </div>
                 </div>
             <?php endforeach; ?>
-
         </div>
     </div>
 </div>
 
+<!-- Berita Terbaru -->
 <div class="our_department_area">
     <div class="container">
         <div class="row">
@@ -56,7 +43,7 @@
                 <div class="col-xl-4 col-md-6 col-lg-4">
                     <div class="single_department">
                         <div class="department_thumb">
-                            <img src="<?= base_url($row['featured_image']); ?>" alt="<?= esc($row['title']); ?>">
+                            <img src="<?= base_url($row['featured_image'] ?: 'uploads/news/default_image.jpg'); ?>" alt="<?= esc($row['title']); ?>">
                         </div>
                         <div class="department_content">
                             <h3>
@@ -74,74 +61,7 @@
     </div>
 </div>
 
-<div class="testmonial_area">
-    <div class="testmonial_active owl-carousel">
-        <div class="single-testmonial testmonial_bg_1 overlay2">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-10 offset-xl-1">
-                        <div class="testmonial_info text-center">
-                            <div class="quote">
-                                <i class="flaticon-straight-quotes"></i>
-                            </div>
-                            <p>Donec imperdiet congue orci consequat mattis. Donec rutrum porttitor <br>
-                                sollicitudin. Pellentesque id dolor tempor sapien feugiat ultrices nec sed neque.
-                                <br>
-                                Fusce ac mattis nulla. Morbi eget ornare dui.
-                            </p>
-                            <div class="testmonial_author">
-                                <h4>Asana Korim</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="single-testmonial testmonial_bg_2 overlay2">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-10 offset-xl-1">
-                        <div class="testmonial_info text-center">
-                            <div class="quote">
-                                <i class="flaticon-straight-quotes"></i>
-                            </div>
-                            <p>Donec imperdiet congue orci consequat mattis. Donec rutrum porttitor <br>
-                                sollicitudin. Pellentesque id dolor tempor sapien feugiat ultrices nec sed neque.
-                                <br>
-                                Fusce ac mattis nulla. Morbi eget ornare dui.
-                            </p>
-                            <div class="testmonial_author">
-                                <h4>Asana Korim</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="single-testmonial testmonial_bg_1 overlay2">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-10 offset-xl-1">
-                        <div class="testmonial_info text-center">
-                            <div class="quote">
-                                <i class="flaticon-straight-quotes"></i>
-                            </div>
-                            <p>Donec imperdiet congue orci consequat mattis. Donec rutrum porttitor <br>
-                                sollicitudin. Pellentesque id dolor tempor sapien feugiat ultrices nec sed neque.
-                                <br>
-                                Fusce ac mattis nulla. Morbi eget ornare dui.
-                            </p>
-                            <div class="testmonial_author">
-                                <h4>Asana Korim</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+<!-- Expert Doctors Area -->
 <div class="expert_doctors_area">
     <div class="container">
         <div class="row">
@@ -171,17 +91,18 @@
     </div>
 </div>
 
+<!-- Emergency Contact -->
 <div class="Emergency_contact">
-    <div class="conatiner-fluid p-0">
+    <div class="container-fluid p-0">
         <div class="row no-gutters">
             <div class="col-xl-6">
                 <div class="single_emergency d-flex align-items-center justify-content-center emergency_bg_1 overlay_skyblue">
                     <div class="info">
                         <h3>Customer Service</h3>
-                        <p>Layanan Darurat Hubungi Kami CS <?= $company['name'] ?></p>
+                        <p>Layanan Darurat Hubungi Kami CS <?= esc($company['name']); ?></p>
                     </div>
                     <div class="info_button">
-                        <a href="https://mitrahusadapringsewu.com" class="boxed-btn3-white"><?= $company['phone'] ?></a>
+                        <a href="https://mitrahusadapringsewu.com" class="boxed-btn3-white"><?= esc($company['phone']); ?></a>
                     </div>
                 </div>
             </div>
@@ -189,7 +110,7 @@
                 <div class="single_emergency d-flex align-items-center justify-content-center emergency_bg_2 overlay_skyblue">
                     <div class="info">
                         <h3>Daftar Online Melalui Mobile JKN</h3>
-                        <p>Booking atau Pendaftaran online melalui aplikasi Mobile JKN </p>
+                        <p>Booking atau Pendaftaran online melalui aplikasi Mobile JKN</p>
                     </div>
                     <div class="info_button">
                         <a href="https://play.google.com/store/search?q=mobile%20jkn&c=apps" target="_blank" class="boxed-btn3-white">Unduh Disini</a>

@@ -5,7 +5,7 @@
     <div class="col-12">
         <div class="alert alert-primary shadow-sm mb-4">
             <h4 class="mb-1">Selamat Datang, <b><?= esc(session('username')) ?></b>!</h4>
-            <div>Anda login sebagai <?= esc(session('username')) ?></div>
+            <div>Anda login sebagai <span class="badge bg-success text-uppercase">Admin</span>.</div>
         </div>
     </div>
 </div>

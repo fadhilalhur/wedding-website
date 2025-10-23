@@ -9,7 +9,6 @@ class KategoriPagesModel extends Model
     protected $allowedFields = [
         'nama_kategori',
         'gambar',
-        
         'slug_kategori'
     ];
 }

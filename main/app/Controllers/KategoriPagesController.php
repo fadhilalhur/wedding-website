@@ -74,10 +74,6 @@ class KategoriPagesController extends Controller
         return redirect()->to(base_url('admin/kategori-pages'));
     }
 
-
-
-
-
     public function delete($id)
     {
         $model = new KategoriPagesModel();

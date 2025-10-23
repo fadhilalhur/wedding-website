@@ -22,22 +22,9 @@
         <?php foreach ($slidernya as $index => $slider): ?>
         <div class="carousel-item <?= ($index === 0) ? 'active' : '' ?>">
             <img src="<?= base_url("uploads/image_slider/" . $slider['image']) ?>" alt="">
-            <!-- <div class="container">
-                <h2>Welcome to Medicio</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <a href="#about" class="btn-get-started">Read More</a>
-            </div> -->
-        </div><!-- End Carousel Item -->
         <?php endforeach; ?>
 
-        <a class="carousel-control-prev" href="#hero-carousel" role="button" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
-        </a>
-        <a class="carousel-control-next" href="#hero-carousel" role="button" data-bs-slide="next">
-            <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
-        </a>
-
-        <ol class="carousel-indicators"></ol>
+        <!-- <ol class="carousel-indicators"></ol> -->
     </div>
 
 </section>

@@ -16,7 +16,9 @@ $routes->get('/', 'PublicWebController::index'); // Halaman utama
 
 // Daftar berita (opsional, jika ingin halaman khusus daftar berita)
 $routes->get('news', 'PublicWebController::berita');
+$routes->get('promo', 'PublicWebController::promo');
 $routes->get('berita/(:segment)', 'PublicWebController::detail/$1');
+$routes->get('promo/(:segment)', 'PublicWebController::detailpromo/$1');
 $routes->get('berita/ajaxSearch', 'PublicWebController::ajaxSearch');
 
 // Detail berita
@@ -35,9 +37,6 @@ $routes->post('kontak-kami', 'PublicWebController::kirimPesan');
 // Jadwal dokter
 $routes->get('schedules', 'PublicWebController::schedules');
 
-$routes->get('asuransi', 'PublicWebController::asuransi');
-
-
 // Halaman profil
 $routes->get('profil', 'PublicWebController::profil');
 
@@ -46,13 +45,18 @@ $routes->get('fasilitas', 'PublicWebController::fasilitas');
 $routes->get('fasilitas/ajaxSearch', 'PublicWebController::ajaxFasilitasSearch');
 $routes->get('pages/(:segment)', 'PublicWebController::detailFasilitas/$1');
 
+// Halaman Telpon
+$routes->get('call', 'PublicWebController::Call');
+
 // Halaman karir
 $routes->get('karir', 'PublicWebController::karir');
 
 // Sub-halaman profil (misal: sejarah, visimisi)
-$routes->get('profil/about', 'PublicWebController::about');
+$routes->get('profil', 'PublicWebController::profil');
+$routes->get('visimisi', 'PublicWebController::visimisi');
+$routes->get('mutu', 'PublicWebController::mutu');
 $routes->get('profil/sejarah', 'PublicWebController::sejarah');
-$routes->get('profil/visimisi', 'PublicWebController::visimisi');
+
 // ADMIN
 $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->get('/', 'AdminController::index');
@@ -143,21 +147,26 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->get('master-spesialis/edit/(:num)', 'SpesialisController::edit/$1');
     $routes->post('master-spesialis/edit/(:num)', 'SpesialisController::update/$1');
     $routes->get('master-spesialis/delete/(:num)', 'SpesialisController::delete/$1');
-
-    // CRUD Asuransi
+    
     $routes->get('asuransi', 'AsuransiController::index');
     $routes->get('asuransi/create', 'AsuransiController::create');
     $routes->post('asuransi/create', 'AsuransiController::create');
     $routes->get('asuransi/edit/(:num)', 'AsuransiController::edit/$1');
     $routes->post('asuransi/edit/(:num)', 'AsuransiController::edit/$1');
     $routes->get('asuransi/delete/(:num)', 'AsuransiController::delete/$1');
+    
 });
 
 // PUBLIC WEB
 $routes->get('/', 'PublicWebController::index');
+
+// batterymonitor
+$routes->post('batterymonitor', 'PublicWebController::batterymonitor');
+
 // Detail berita
 $routes->get('news/(:segment)', 'PublicWebController::newsDetail/$1');
 // Daftar dokter
 $routes->get('doctors', 'PublicWebController::doctors');
 // Jadwal dokter
 $routes->get('schedules', 'PublicWebController::schedules');
+$routes->get('daftar-penjamin', 'PublicWebController::asuransi');

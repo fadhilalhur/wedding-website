@@ -1,17 +1,14 @@
 <!-- bradcam_area_start  -->
-<div class="bradcam_area breadcam_bg bradcam_overlay">
-    <div class="container">
-        <div class="row">
-            <div class="col-xl-12">
-                <div class="bradcam_text">
-                    <h3>Detail Berita</h3>
-                    <p><a href="<?= base_url('/') ?>">Detail Berita /</a> <?= esc($news['title']) ?></p>
-                </div>
-            </div>
-        </div>
+<?php if (!empty($breadcam['gambar'])): ?>
+    <div class="bradcam_area" 
+            style="background: url('<?= base_url($breadcam['gambar']) ?>') no-repeat center center; 
+                    background-size: cover; padding: 80px 0;">
     </div>
-</div>
-<!-- bradcam_area_end  -->
+<?php else: ?>
+    <div class="bradcam_area" style="background-color: #ccc; padding: 80px 0;">
+            tidak ada banner
+    </div>
+<?php endif; ?>        
 
 <section class="blog_area single-post-area section-padding">
     <div class="container">
@@ -19,7 +16,7 @@
             <div class="col-lg-8 posts-list">
                 <div class="single-post">
                     <div class="feature-img mb-4">
-                        <img class="img-fluid" src="<?= base_url($news['featured_image']); ?>" alt="<?= esc($news['title']); ?>">
+                        <img class="img-fluid" src="<?= base_url($news['featured_image'] ?: 'uploads/news/default_image.jpg'); ?>" alt="<?= esc($news['title']); ?>">
                     </div>
                     <div class="blog_details">
                         <h2><?= esc($news['title']) ?></h2>
