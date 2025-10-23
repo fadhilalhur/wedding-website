@@ -1,0 +1,110 @@
+<!-- bradcam_area_start  -->
+<div class="bradcam_area breadcam_bg bradcam_overlay">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="bradcam_text">
+                    <h3>Fasilitas</h3>
+                    <p><a href="<?= base_url('/') ?>">Home /</a> Fasilitas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- bradcam_area_end  -->
+
+<section class="blog_area section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mb-5 mb-lg-0">
+                <div class="blog_left_sidebar" id="fasilitasList">
+                    <?php foreach ($fasilitas as $item): ?>
+                        <article class="blog_item">
+                            <div class="blog_item_img">
+                                <img class="card-img rounded-0" src="<?= base_url($item['gambar']); ?>" alt="<?= esc($item['title']); ?>">
+                                <a href="<?= base_url('pages/' . $item['slug']) ?>" class="blog_item_date">
+                                    <h3><?= date('d', strtotime($item['created_at'])) ?></h3>
+                                    <p><?= date('M', strtotime($item['created_at'])) ?></p>
+                                </a>
+                            </div>
+
+                            <div class="blog_details">
+                                <a class="d-inline-block" href="<?= base_url('pages/' . $item['slug']) ?>">
+                                    <h2><?= esc($item['title']) ?></h2>
+                                </a>
+                                <p><?= word_limiter(strip_tags($item['content']), 25) ?></p>
+                                <ul class="blog-info-link">
+                                    <li><i class="fa fa-calendar"></i> <?= date('d M Y', strtotime($item['created_at'])) ?></li>
+                                </ul>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+
+                    <nav class="blog-pagination justify-content-center d-flex">
+                        <ul class="pagination">
+                            <?= $pager->links() ?>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="blog_right_sidebar">
+                    <!-- Optional: Sidebar cari Fasilitas -->
+                    <aside class="single_sidebar_widget search_widget">
+                        <form method="get" action="<?= base_url('fasilitas') ?>">
+                            <div class="form-group">
+                                <div class="input-group mb-3">
+                                    <input type="text" id="searchInput" name="q" class="form-control" placeholder="Cari Fasilitas..." value="<?= esc($search ?? '') ?>">
+                                    <div class="input-group-append">
+                                        <button class="btn" id="searchBtn" type="button"><i class="ti-search"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="button rounded-0 primary-bg text-white w-100 btn_1 boxed-btn"
+                                type="submit">Search</button>
+                        </form>
+                    </aside>
+                    <aside class="single_sidebar_widget popular_post_widget">
+                        <h3 class="widget_title">Fasilitas Terbaru</h3>
+                        <?php foreach ($recentFasilitas as $post): ?>
+                            <div class="media post_item">
+                                <img src="<?= base_url($post['gambar']); ?>" alt="<?= esc($post['title']); ?>" style="width: 60px; height: 60px; object-fit: cover;">
+                                <div class="media-body">
+                                    <a href="<?= base_url('pages/' . $post['slug']) ?>">
+                                        <h3><?= esc($post['title']) ?></h3>
+                                    </a>
+                                    <p><?= date('d M Y', strtotime($post['created_at'])) ?></p>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </aside>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#searchBtn').on('click', function() {
+            let keyword = $('#searchInput').val();
+
+            $.ajax({
+                url: "<?= base_url('fasilitas/ajaxSearch') ?>",
+                method: "GET",
+                data: {
+                    q: keyword
+                },
+                success: function(response) {
+                    $('#fasilitasList').html(response);
+                },
+                error: function(xhr) {
+                    console.log("Terjadi kesalahan:", xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
